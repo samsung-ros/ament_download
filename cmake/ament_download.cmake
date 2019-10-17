@@ -31,7 +31,7 @@
 # Additionally, options EXCLUDE_FROM_ALL and REQUIRED can be specified.
 #
 # @public
-function(colcon_download target url)
+function(ament_download target url)
   cmake_parse_arguments(ARG
     "EXCLUDE_FROM_ALL;REQUIRED" "DESTINATION;FILENAME;MD5" "" ${ARGN})
   if(ARG_UNPARSED_ARGUMENTS)
@@ -53,12 +53,15 @@ function(colcon_download target url)
   endif()
 
   set(output "${ARG_DESTINATION}/${ARG_FILENAME}")
+  message(${output})
+  message(${ament_download_DIR})
+  message(${PYTHON_EXECUTABLE} ${ament_download_DIR}/download_checkmd5.py ${url} ${output} ${ARG_MD5} ${required})
 
   # With this, the command is always called, even when the output is up to date.
   # this is because we want to check the md5 sum if it's given, and redownload
   # the target if the md5 sum does not match.
   add_custom_target(${target}
-    COMMAND ${PYTHON_EXECUTABLE} src/download_checkmd5.py ${url} ${output} ${ARG_MD5} ${required}
+    COMMAND ${PYTHON_EXECUTABLE} ${ament_download_DIR}/download_checkmd5.py ${url} ${output} ${ARG_MD5} ${required}
     VERBATIM)
 
   if(ARG_EXCLUDE_FROM_ALL)

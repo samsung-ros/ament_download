@@ -1,3 +1,4 @@
+#!/bin/env python
 # Taken from Catkin's catkin_download under BSD-3
 # https://github.com/ros/catkin
 
