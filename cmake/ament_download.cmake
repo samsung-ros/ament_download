@@ -10,11 +10,7 @@
 #   a configure / make cycle since this prevents building the package
 #   when no network connectivity is available.
 #
-# .. note:: The target will be registered as a dependency
-#   of the "download_extra_data" target.
 #
-# :param target: the target name
-# :type target: string
 # :param url: the url to download
 # :type url: string
 #
@@ -31,12 +27,12 @@
 # Additionally, options EXCLUDE_FROM_ALL and REQUIRED can be specified.
 #
 # @public
-function(ament_download target url)
+function(ament_download url)
   cmake_parse_arguments(ARG
     "EXCLUDE_FROM_ALL;REQUIRED" "DESTINATION;FILENAME;MD5" "" ${ARGN})
   if(ARG_UNPARSED_ARGUMENTS)
     message(FATAL_ERROR
-      "colcon_download() called with unused arguments: ${ARG_UNPARSED_ARGUMENTS}")
+      "ament_download() called with unused arguments: ${ARG_UNPARSED_ARGUMENTS}")
   endif()
 
   if(NOT ARG_DESTINATION)
@@ -53,26 +49,10 @@ function(ament_download target url)
   endif()
 
   set(output "${ARG_DESTINATION}/${ARG_FILENAME}")
-  message(${output})
-  message(${ament_download_DIR})
-  message(${PYTHON_EXECUTABLE} ${ament_download_DIR}/download_checkmd5.py ${url} ${output} ${ARG_MD5} ${required})
 
   # With this, the command is always called, even when the output is up to date.
   # this is because we want to check the md5 sum if it's given, and redownload
   # the target if the md5 sum does not match.
-  add_custom_target(${target}
-    COMMAND ${PYTHON_EXECUTABLE} ${ament_download_DIR}/download_checkmd5.py ${url} ${output} ${ARG_MD5} ${required}
-    VERBATIM)
+  execute_process(COMMAND ${PYTHON_EXECUTABLE} ${ament_download_DIR}/download_checkmd5.py ${url} ${output} ${ARG_MD5} ${required})
 
-  if(ARG_EXCLUDE_FROM_ALL)
-    set_target_properties(${target} PROPERTIES EXCLUDE_FROM_ALL TRUE)
-  endif()
-
-  if(TARGET download_extra_data)
-    add_dependencies(download_extra_data ${target})
-  endif()
 endfunction()
-
-if(NOT TARGET download_extra_data)
-  add_custom_target(download_extra_data)
-endif()

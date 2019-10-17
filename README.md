@@ -8,8 +8,9 @@ This is a temporary holding before potentially being merged into `ament/ament_cm
 Example use:
 
 ```
-  ament_download(table_scene_lms400.pcd http://download.ros.org/data/pcl/table_scene_lms400.pcd
-    DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/samples/data
-    MD5 546b5b4822fb1de21b0cf83d41ad6683
-  )
+ament_download(http://download.ros.org/data/pcl/table_scene_lms400.pcd
+  DESTINATION /home/s.macenski
+  MD5 546b5b4822fb1de21b0cf83d41ad6683
+  FILENAME table_scene_lms400.pcd
+)
 ```
